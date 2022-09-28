@@ -20,7 +20,7 @@ std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd().
 typedef std::tuple<double, double, double> data_tuple;
 
 
-std::vector<data_tuple> database_read (const std::string & name);
+std::vector<data_tuple> coordinates_read (const std::string & name);
 
 double min (std::vector<data_tuple> & data);
 
@@ -30,7 +30,7 @@ void data_file_creation (const std::string & name, std::vector<data_tuple> & dat
 
 
 int main () {
-    std::vector<data_tuple> data = database_read("coordinates");
+    std::vector<data_tuple> data = coordinates_read("coordinates");
     fix(data, first_inserted_atom, box_size);
     std::cout << "Minimal_distance:\t" << min(data) << '\n';
     data_file_creation("coordinates", data);
@@ -56,8 +56,9 @@ namespace std {
 
 /* Function returns data in std::vector of std::tuple from text file include the interaction cross section for particle
  * with determined energy in environment. File looks like matrix 3xN. */
-std::vector<data_tuple> database_read (const std::string & name) {
+std::vector<data_tuple> coordinates_read (const std::string & name) {
     std::ifstream inFile(name);
+    if (!inFile.is_open()) throw std::runtime_error("Error opening file.");
     std::vector<data_tuple> tuples_vector;
     copy(std::istream_iterator<data_tuple> {inFile},
          std::istream_iterator<data_tuple> {},
