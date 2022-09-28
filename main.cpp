@@ -102,7 +102,7 @@ void fix (std::vector<data_tuple> & data, const int & first_insert, const double
     do {
         i = problem_atom(data, first_insert);
         new_coordinates(data[i], box_size);
-    } while (i > first_insert && distance(data[1], data[0]) > min(data, first_insert));
+    } while (distance(data[1], data[0]) > min(data, first_insert));
 }
 
 
