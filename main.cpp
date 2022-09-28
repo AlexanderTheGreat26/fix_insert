@@ -54,8 +54,6 @@ namespace std {
 }
 
 
-/* Function returns data in std::vector of std::tuple from text file include the interaction cross section for particle
- * with determined energy in environment. File looks like matrix 3xN. */
 std::vector<data_tuple> coordinates_read (const std::string & name) {
     std::ifstream inFile(name);
     if (!inFile.is_open()) throw std::runtime_error("Error opening file.");
