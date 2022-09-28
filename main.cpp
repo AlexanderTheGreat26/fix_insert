@@ -55,10 +55,10 @@ namespace std {
 
 
 std::vector<data_tuple> coordinates_read (const std::string & name) {
-    std::ifstream inFile(name);
-    if (!inFile.is_open()) throw std::runtime_error("Error opening file.");
+    std::ifstream fin(name);
+    if (!fin.is_open()) throw std::runtime_error("Error opening file.");
     std::vector<data_tuple> tuples_vector;
-    copy(std::istream_iterator<data_tuple> {inFile},
+    copy(std::istream_iterator<data_tuple> {fin},
          std::istream_iterator<data_tuple> {},
          back_inserter(tuples_vector));
     //copy(tuples_vector.begin(), tuples_vector.end(), std::ostream_iterator<data>(std::cout, "\n"));
@@ -83,8 +83,7 @@ int problem_atom (std::vector<data_tuple> & data) {
     double buf = distance(data[1], data[0]);
     for (int i = 1; i < data.size(); ++i)
         for (int j = 0; j < i; ++j)
-            if (distance(data[i], data[j]) < buf)
-                ans = i;
+            if (distance(data[i], data[j]) < buf) ans = i;
     return ans;
 }
 
