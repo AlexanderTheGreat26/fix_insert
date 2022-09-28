@@ -22,7 +22,7 @@ typedef std::tuple<double, double, double> data_tuple;
 
 std::vector<data_tuple> coordinates_read (const std::string & name);
 
-double min (std::vector<data_tuple> & data);
+double min (std::vector<data_tuple> & data, const int & first_insert);
 
 void fix (std::vector<data_tuple> & data, const int & first_insert, const double & box_size);
 
@@ -32,7 +32,7 @@ void data_file_creation (const std::string & name, std::vector<data_tuple> & dat
 int main () {
     std::vector<data_tuple> data = coordinates_read("coordinates");
     fix(data, first_inserted_atom, box_size);
-    std::cout << "Minimal_distance:\t" << min(data) << '\n';
+    std::cout << "Minimal_distance:\t" << min(data, first_inserted_atom) << '\n';
     data_file_creation("coordinates", data);
     return 0;
 }
@@ -78,10 +78,10 @@ double distance (const Tuple & t, const Tuple & t1) {
 }
 
 
-int problem_atom (std::vector<data_tuple> & data) {
+int problem_atom (std::vector<data_tuple> & data, const int & first_insert) {
     int ans = data.size();
     double buf = distance(data[1], data[0]);
-    for (int i = 1; i < data.size(); ++i)
+    for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j)
             if (distance(data[i], data[j]) < buf) ans = i;
     return ans;
@@ -100,15 +100,15 @@ void new_coordinates (std::tuple<Tp...>& coordinate, const double & box_size) {
 void fix (std::vector<data_tuple> & data, const int & first_insert, const double & box_size) {
     int i;
     do {
-        i = problem_atom(data);
+        i = problem_atom(data, first_insert);
         new_coordinates(data[i], box_size);
-    } while (i > first_insert);
+    } while (i > first_insert && distance(data[1], data[0]) > min(data, first_insert));
 }
 
 
-double min (std::vector<data_tuple> & data) {
+double min (std::vector<data_tuple> & data, const int & first_insert) {
     double buf = distance(data[1], data[0]);
-    for (int i = 1; i < data.size(); ++i)
+    for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j) {
             double dist = distance(data[i], data[j]);
             if (dist < buf) buf = dist;
