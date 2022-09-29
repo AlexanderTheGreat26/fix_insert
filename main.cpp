@@ -1,3 +1,6 @@
+/* Script replaces inserted atoms so that the distance from the implanted atom to any other
+ * exceeds the distance between the two default atoms. */
+
 #include <iostream>
 #include <random>
 #include <vector>
@@ -54,6 +57,7 @@ namespace std {
 }
 
 
+// Read coordinates from text-file.
 std::vector<data_tuple> coordinates_read (const std::string & name) {
     std::ifstream fin(name);
     if (!fin.is_open()) throw std::runtime_error("Error opening file.");
@@ -66,6 +70,7 @@ std::vector<data_tuple> coordinates_read (const std::string & name) {
 }
 
 
+// Returns distance between two atoms.
 template<typename T, size_t... Is>
 double distance_impl (T const& t, T const& t1, std::index_sequence<Is...>, std::index_sequence<Is...>) {
     return (std::sqrt((std::pow(std::get<Is>(t) - std::get<Is>(t1), 2) + ...)));
@@ -78,9 +83,10 @@ double distance (const Tuple & t, const Tuple & t1) {
 }
 
 
+// Finds the implanted atom which too close to other(s).
 int problem_atom (std::vector<data_tuple> & data, const int & first_insert) {
     int ans = data.size();
-    double buf = distance(data[3], data[0]);
+    double buf = distance(data[1], data[0]);
     for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j)
             if (distance(data[i], data[j]) < buf) ans = i;
@@ -88,6 +94,7 @@ int problem_atom (std::vector<data_tuple> & data, const int & first_insert) {
 }
 
 
+// Generates new coordinates for implanted atom which too close to other(s).
 template<size_t Is = 0, typename... Tp>
 void new_coordinates (std::tuple<Tp...>& coordinate, const double & box_size) {
     std::uniform_real_distribution<> dis(0, box_size);
@@ -97,6 +104,8 @@ void new_coordinates (std::tuple<Tp...>& coordinate, const double & box_size) {
 }
 
 
+/* Generates new coordinates for implanted atoms while the distance from implanted less
+ * than distance between two default atoms. */
 void fix (std::vector<data_tuple> & data, const int & first_insert, const double & box_size) {
     int i;
     do {
@@ -106,8 +115,9 @@ void fix (std::vector<data_tuple> & data, const int & first_insert, const double
 }
 
 
+// Finds minimal distance from implanted atoms to another.
 double min (std::vector<data_tuple> & data, const int & first_insert) {
-    double buf = distance(data[3], data[0]);
+    double buf = distance(data[1], data[0]);
     for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j) {
             double dist = distance(data[i], data[j]);
@@ -139,6 +149,7 @@ std::string tuple_to_string (const Tuple& t) {
 }
 
 
+// Creates text-file with coordinates from std::vector<data_tuple> with given name.
 void data_file_creation (const std::string & name, std::vector<data_tuple> & data) {
     std::ofstream fout;
     fout.open(name, std::ios::trunc);
