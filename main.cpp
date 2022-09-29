@@ -33,7 +33,7 @@ int main () {
     std::vector<data_tuple> data = coordinates_read("coordinates");
     fix(data, first_inserted_atom, box_size);
     std::cout << "Minimal_distance:\t" << min(data, first_inserted_atom) << '\n';
-    data_file_creation("coordinates", data);
+    data_file_creation("fixed_coordinates", data);
     return 0;
 }
 
@@ -80,7 +80,7 @@ double distance (const Tuple & t, const Tuple & t1) {
 
 int problem_atom (std::vector<data_tuple> & data, const int & first_insert) {
     int ans = data.size();
-    double buf = distance(data[1], data[0]);
+    double buf = distance(data[3], data[0]);
     for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j)
             if (distance(data[i], data[j]) < buf) ans = i;
@@ -107,7 +107,7 @@ void fix (std::vector<data_tuple> & data, const int & first_insert, const double
 
 
 double min (std::vector<data_tuple> & data, const int & first_insert) {
-    double buf = distance(data[1], data[0]);
+    double buf = distance(data[3], data[0]);
     for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j) {
             double dist = distance(data[i], data[j]);
