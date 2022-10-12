@@ -13,7 +13,7 @@
 
 
 const int first_inserted_atom = 96;
-const double box_size = 10.260;
+const double box_size = 12.10;
 
 
 std::random_device rd;  // Will be used to obtain a seed for the random number engine.
@@ -84,12 +84,14 @@ double distance (const Tuple & t, const Tuple & t1) {
 
 
 // Finds the implanted atom which too close to other(s).
-int problem_atom (std::vector<data_tuple> & data, const int & first_insert) {
+int problem_atom (std::vector<data_tuple> & data, const int & first_insert, const double & box_size) {
     int ans = data.size();
-    double buf = distance(data[1], data[0]);
+    double buf = distance(data[0], data[1]);
     for (int i = first_insert; i < data.size(); ++i)
-        for (int j = 0; j < i; ++j)
-            if (distance(data[i], data[j]) < buf) ans = i;
+        for (int j = 0; j < i; ++j) {
+            double dist = distance(data[i], data[j]);
+            if (dist < buf || dist <= box_size + buf && dist >= box_size - buf) ans = i;
+        }
     return ans;
 }
 
@@ -109,7 +111,7 @@ void new_coordinates (std::tuple<Tp...>& coordinate, const double & box_size) {
 void fix (std::vector<data_tuple> & data, const int & first_insert, const double & box_size) {
     int i;
     do {
-        i = problem_atom(data, first_insert);
+        i = problem_atom(data, first_insert, box_size);
         new_coordinates(data[i], box_size);
     } while (distance(data[1], data[0]) > min(data, first_insert));
 }
@@ -117,7 +119,7 @@ void fix (std::vector<data_tuple> & data, const int & first_insert, const double
 
 // Finds minimal distance from implanted atoms to another.
 double min (std::vector<data_tuple> & data, const int & first_insert) {
-    double buf = distance(data[1], data[0]);
+    double buf = distance(data[0], data[1]);
     for (int i = first_insert; i < data.size(); ++i)
         for (int j = 0; j < i; ++j) {
             double dist = distance(data[i], data[j]);
