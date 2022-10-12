@@ -110,10 +110,11 @@ void new_coordinates (std::tuple<Tp...>& coordinate, const double & box_size) {
  * than distance between two default atoms. */
 void fix (std::vector<data_tuple> & data, const int & first_insert, const double & box_size) {
     int i;
+    static const double dist = distance(data[1], data[0]);
     do {
         i = problem_atom(data, first_insert, box_size);
         new_coordinates(data[i], box_size);
-    } while (distance(data[1], data[0]) > min(data, first_insert));
+    } while (dist > min(data, first_insert));
 }
 
 
